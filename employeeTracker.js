@@ -19,6 +19,6 @@ connection.connect(function (err) {
 
 //start application
 function start() {
-    console.log("Closing conneciton...\n");
+    console.log("Closing connection...");
     connection.end();
 }
