@@ -127,9 +127,12 @@ function qGetRoles() {
 }
 
 //queries to add new role
-function qAddRole() {
+function qAddRole(role) {
     console.log("Querying: add new role");
-    mainMenu();
+    connection.query("INSERT INTO role(title, salary, department_id) VALUES (?, ?, ?)", role, function (err, res) {
+        if (err) throw err;
+        mainMenu();
+    });
 }
 
 //queries all departments
@@ -189,7 +192,31 @@ function promptDepartmentInfo() {
 //Ask user for information of the new role to add
 function promptRoleInfo() {
     console.log("Prompting for new role informatin to add");
-    qAddRole()
+
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "Enter role title: ",
+            name: "title"
+        },
+        {
+            type: "input",
+            message: "Enter role salary: ",
+            name: "salary"
+        },
+        {
+            type: "input",
+            message: "Enter department id: ",
+            name: "departmentid"
+        }
+    ]).then(function (res) {
+        qAddRole([
+            res.title,
+            res.salary,
+            res.departmentid
+        ]);
+    });
+
 }
 
 //Asks user to select an employee
