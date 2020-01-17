@@ -51,7 +51,7 @@ function mainMenu() {
             case "View All Employees by Manager":
                 break;
             case "Add Employee":
-                promptForEmployeeinfo();
+                addEmployee();
                 break;
             case "Remove Employee":
                 removeEmployee();
@@ -88,10 +88,20 @@ function mainMenu() {
     });
 }
 
+function addEmployee() {
+    qGetEmployees().then(function (managers) {
+        qGetRoles().then(function (roles) {
+            promptForEmployeeinfo(roles, managers);
+        })
+    });
+}
 
+//Gets all the employees and asks user to select the employee and their manager
 function updateEmployeeManager() {
     qGetEmployees().then(function (employees) {
+        console.log("Select an employee");
         promptSelectEmployee(employees).then(function (employeeid) {
+            console.log("Select employee's manager");
             promptSelectEmployee(employees).then(function (managerid) {
                 qUpdateEmployeeManager(employeeid, managerid);
             })
@@ -105,6 +115,7 @@ function updateEmployeeManager() {
 function updateEmployeeRole() {
     qGetEmployees().then(function (employees) {
         qGetRoles().then(function (roles) {
+            console.log("Select an employee");
             promptSelectEmployee(employees).then(function (employeeid) {
                 promptSelectRole(roles).then(function (roleid) {
                     qUpdateEmployeeRole(employeeid, roleid);
@@ -128,7 +139,7 @@ function removeEmployee() {
 
 //queries all employees
 function qGetEmployees(cb) {
-    console.log("Querying all employees...");
+    console.log("Getting all employees...");
     return new Promise(function (resolve, reject) {
         connection.query("SELECT * FROM Employee", function (err, res) {
             if (err) return reject(Error(err));;
@@ -140,8 +151,8 @@ function qGetEmployees(cb) {
 //queries to add employee
 //@param {array} employee - array of new employees first name, last name and roleid
 function qAddEmployee(employee) {
-    console.log("Querying: add employee...");
-    connection.query("INSERT INTO employee(first_name, last_name, role_id) VALUES (?, ?, ?)", employee, function (err, res) {
+    console.log("Adding employee...");
+    connection.query("INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", employee, function (err, res) {
         if (err) throw err;
         mainMenu();
     });
@@ -150,7 +161,7 @@ function qAddEmployee(employee) {
 //queries to remove employee 
 //@param employeeid - employee's id to remove
 function qRemoveEmployee(employeeid) {
-    console.log("Querying: removing employee...");
+    console.log("Removing employee...");
     connection.query("DELETE FROM employee WHERE id=?", employeeid, function (err, res) {
         if (err) throw err;
         mainMenu();
@@ -161,7 +172,7 @@ function qRemoveEmployee(employeeid) {
 //@param employeedid - id of employee to update role to
 //@param roleid - id of the employee's new role
 function qUpdateEmployeeRole(employeeid, roleid) {
-    console.log("Querying: Updating employee role");
+    console.log("Updating employee role...");
     connection.query("UPDATE employee SET role_id = ? WHERE id = ?", [roleid, employeeid], function (err, res) {
         if (err) throw err;
         mainMenu();
@@ -172,7 +183,7 @@ function qUpdateEmployeeRole(employeeid, roleid) {
 //@param employeedid - id of employee to update role to
 //@param manager - id of the employee's new manager
 function qUpdateEmployeeManager(employeeid, managerid) {
-    console.log("Querying: Updating employee manager");
+    console.log("Updating employee manager...");
     connection.query("UPDATE employee SET manager_id = ? WHERE id = ?", [managerid, employeeid], function (err, res) {
         if (err) throw err;
         mainMenu();
@@ -181,7 +192,7 @@ function qUpdateEmployeeManager(employeeid, managerid) {
 
 //queries and returns roles
 function qGetRoles() {
-    console.log("Querying all roles");
+    console.log("Getting all roles...");
     return new Promise(function (resolve, reject) {
         connection.query("SELECT * FROM Role", function (err, res) {
             if (err) return reject(Error(err));;
@@ -193,7 +204,7 @@ function qGetRoles() {
 //queries to add new role
 //@param role - array of the new role's title, salary and department id
 function qAddRole(role) {
-    console.log("Querying: add new role");
+    console.log("Adding new role...");
     connection.query("INSERT INTO role(title, salary, department_id) VALUES (?, ?, ?)", role, function (err, res) {
         if (err) throw err;
         mainMenu();
@@ -202,7 +213,7 @@ function qAddRole(role) {
 
 //queries and returns all departments
 function qGetDepartments() {
-    console.log("Querying all departments");
+    console.log("Getting all departments...");
     return new Promise(function (resolve, reject) {
         connection.query("SELECT * FROM Department", function (err, res) {
             if (err) return reject(Error(err));;
@@ -214,7 +225,7 @@ function qGetDepartments() {
 //Queries to add a new department
 //@param department - new department's name
 function qAddDepartment(department) {
-    console.log("Querying: add department");
+    console.log("Adding department...");
     connection.query("INSERT INTO department(name) VALUES (?)", department, function (err, res) {
         if (err) throw err;
         mainMenu();
@@ -227,51 +238,63 @@ function qAddDepartment(department) {
 //Ask user for information of the new employee to add
 //Gets all roles titles to let the user choose new employee's role
 //calls to query add employee
-function promptForEmployeeinfo() {
-    console.log("Prompting employee info to add");
-    qGetRoles().then(function (roles) {
-        let roleNames = roles.map(r => {
-            return (r.title);
-        });
-        inquirer.prompt([
-            {
-                type: "input",
-                message: "Enter first name: ",
-                name: "firstName"
-            },
-            {
-                type: "input",
-                message: "Enter last name: ",
-                name: "lastName"
-            },
-            {
-                type: "list",
-                message: "Enter role: ",
-                name: "role",
-                choices: roleNames
-            }
-        ]).then(function (res) {
-            var roleid;
-            roles.forEach(r => {
-                if (r.title === res.role) {
-                    roleid = r.id;
-                }
-            });
-
-            qAddEmployee([
-                res.firstName,
-                res.lastName,
-                roleid
-            ]);
-        });
-
+function promptForEmployeeinfo(roles, managers) {
+    console.log("Enter new employee's information");
+    let roleNames = roles.map(r => {
+        return (r.title);
     });
+    let managerNames = managers.map(m => {
+        return (m.first_name);
+    });
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "Enter first name: ",
+            name: "firstName"
+        },
+        {
+            type: "input",
+            message: "Enter last name: ",
+            name: "lastName"
+        },
+        {
+            type: "list",
+            message: "Select role: ",
+            name: "role",
+            choices: roleNames
+        },
+        {
+            type: "list",
+            message: "Select manager: ",
+            name: "manager",
+            choices: managerNames
+        }
+    ]).then(function (res) {
+        var roleid;
+        roles.forEach(r => {
+            if (r.title === res.role) {
+                roleid = r.id;
+            }
+        });
+        var managerid;
+        managers.forEach(m => {
+            if (m.name === res.name) {
+                managerid = m.id;
+            }
+        });
+
+        qAddEmployee([
+            res.firstName,
+            res.lastName,
+            roleid,
+            managerid
+        ]);
+    });
+
 }
 
 //Ask user for information of the new department to add and calls to query add department
 function promptDepartmentInfo() {
-    console.log("Prompting department info to add");
-
     inquirer.prompt(
         {
             type: "input",
@@ -289,7 +312,7 @@ function promptDepartmentInfo() {
 //Gets department names to let the user choose the role department
 //Calls to query add role
 function promptRoleInfo() {
-    console.log("Prompting for new role informatin to add");
+    console.log("Enter new role's information");
     qGetDepartments().then(function (departments) {
         let departmentNames = departments.map(d => {
             return (d.name);
@@ -331,7 +354,6 @@ function promptRoleInfo() {
 //This resolves once the user selects an employee name and this name is mapped to the employee id.
 //@param employees - list of objects with employee information
 function promptSelectEmployee(employees) {
-    console.log("prompting to select an employee...");
     return new Promise(function (resolve, reject) {
         if (!employees) return reject(Error("No employees found!"));
         let names = employees.map(e => {
@@ -355,7 +377,7 @@ function promptSelectEmployee(employees) {
 //Asks user to choose a new role and returns it
 //@param roles - arry of role objects
 function promptSelectRole(roles) {
-    console.log("Prompting to select a new employee role...");
+    console.log("Select employee role...");
     return new Promise(function (resolve, reject) {
         if (!roles) return reject(Error("No roles found!"));
         let roleTitles = roles.map(r => {
