@@ -161,30 +161,43 @@ function qAddDepartment(department) {
 //Ask user for information of the new employee to add
 function promptForEmployeeinfo() {
     console.log("Prompting employee info to add");
-    inquirer.prompt([
-        {
-            type: "input",
-            message: "Enter first name: ",
-            name: "firstName"
-        },
-        {
-            type: "input",
-            message: "Enter last name: ",
-            name: "lastName"
-        },
-        {
-            type: "input",
-            message: "Enter role: ",
-            name: "role"
-        }
-    ]).then(function (res) {
-        qAddEmployee([
-            res.firstName,
-            res.lastName,
-            res.role
-        ]);
-    });
+    qGetRoles().then(function (roles) {
+        let roleNames = roles.map(r => {
+            return (r.title);
+        });
+        inquirer.prompt([
+            {
+                type: "input",
+                message: "Enter first name: ",
+                name: "firstName"
+            },
+            {
+                type: "input",
+                message: "Enter last name: ",
+                name: "lastName"
+            },
+            {
+                type: "list",
+                message: "Enter role: ",
+                name: "role",
+                choices: roleNames
+            }
+        ]).then(function (res) {
+            var roleid;
+            roles.forEach(r => {
+                if (r.title === res.role) {
+                    roleid = r.id;
+                }
+            });
 
+            qAddEmployee([
+                res.firstName,
+                res.lastName,
+                roleid
+            ]);
+        });
+
+    });
 }
 
 //Ask user for informatino of the new department to add
