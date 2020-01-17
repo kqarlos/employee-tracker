@@ -61,7 +61,7 @@ function mainMenu() {
             case "Update Employee Manager":
                 break;
             case "View All Roles":
-                qGetRoles(displayRoles);
+                displayRoles();
                 break;
             case "Add Role":
                 promptRoleInfo();
@@ -94,7 +94,6 @@ function qGetEmployees(cb) {
     connection.query("SELECT * FROM Employee", function (err, res) {
         if (err) throw err;
         cb(res);
-
     });
 }
 
@@ -104,21 +103,26 @@ function qAddEmployee(employee) {
     connection.query("INSERT INTO employee(first_name, last_name, role_id) VALUES (?, ?, ?)", employee, function (err, res) {
         if (err) throw err;
         mainMenu();
-    })
+    });
 }
 
 //queries to update employee role
-function qUpdateEmployeeRole() {
+function qUpdateEmployeeRole(employeeid, roleid) {
     console.log("Querying: Updating employee role");
-    mainMenu();
+    connection.query("UPDATE employee SET role_id = ? WHERE id = ?", [roleid, employeeid], function (err, res) {
+        if (err) throw err;
+        mainMenu();
+    });
 }
 
 //queries to view roles
-function qGetRoles(cb) {
+function qGetRoles() {
     console.log("Querying all roles");
-    connection.query("SELECT * FROM Role", function (err, res) {
-        if (err) throw err;
-        cb(res);
+    return new Promise(function (resolve, reject) {
+        connection.query("SELECT * FROM Role", function (err, res) {
+            if (err) return reject(Error("Invalid URL!"));;
+            resolve(res);
+        });
     });
 }
 
@@ -191,12 +195,52 @@ function promptRoleInfo() {
 //Asks user to select an employee
 function promptSelectEmployees(employees) {
     console.log("prompting to select an employee...");
-    qGetRoles(promptUpdateRole);
+    let names = employees.map(e => {
+        return (e.first_name);
+    });
+    console.log(names);
+    inquirer.prompt({
+        type: "list",
+        name: "employeeName",
+        message: "Select an employee",
+        choices: names
+    }).then(function (res) {
+        var employeeid;
+        employees.forEach(e => {
+            if (e.first_name === res.employeeName) {
+                employeeid = e.id;
+            }
+        });
+
+        qGetRoles().then(function (roles) {
+            promptUpdateRole(employeeid, roles);
+        });
+    });
 }
+
 //Asks user to choose a new role to update the employee role
-function promptUpdateRole(roles) {
+function promptUpdateRole(employeeid, roles) {
+    // console.log(employeeid);
+    // console.log(roles);
+    let roleTitles = roles.map(r => {
+        return (r.title);
+    });
     console.log("Prompting to select a new employee role...");
-    qUpdateEmployeeRole();
+    inquirer.prompt({
+        type: "list",
+        name: "role",
+        message: "Choose a new role",
+        choices: roleTitles
+    }).then(function (res) {
+        var roleid;
+        roles.forEach(r => {
+            if (r.title === res.role) {
+                roleid = r.id;
+            }
+        });
+
+        qUpdateEmployeeRole(employeeid, roleid);
+    });
 
 }
 
@@ -210,10 +254,12 @@ function displayEmployees(employees) {
 }
 
 //displays roles
-function displayRoles(roles) {
+function displayRoles() {
     console.log("============================= Roles =============================");
-    console.table(roles);
-    mainMenu();
+    qGetRoles().then(function (res) {
+        console.table(res);
+        mainMenu();
+    });
 }
 
 //displays department
