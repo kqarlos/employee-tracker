@@ -35,7 +35,7 @@ var connection = mysql.createConnection({
 //Connect to the database
 connection.connect(function (err) {
     if (err) throw err;
-    console.log("Connected as id: " + connection.threadId + "\n");
+    console.log("WELCOME TO EMPLOYEE TRACKER!");
     mainMenu();
 });
 
@@ -88,6 +88,7 @@ function mainMenu() {
     });
 }
 
+//Calls to get employees and roles. calls to prompt for new employee's info
 function addEmployee() {
     qGetEmployees().then(function (managers) {
         qGetRoles().then(function (roles) {
@@ -138,7 +139,7 @@ function removeEmployee() {
 //==================================== QUERIES ===================================
 
 //queries all employees
-function qGetEmployees(cb) {
+function qGetEmployees() {
     console.log("Getting all employees...");
     return new Promise(function (resolve, reject) {
         connection.query("SELECT * FROM Employee", function (err, res) {
@@ -402,8 +403,9 @@ function promptSelectRole(roles) {
 
 //displays employees
 function displayEmployees() {
-    console.log("=========================== Employees ===========================");
     qGetEmployees().then(function (res) {
+        console.log("======================== Employees =========================");
+        res = res.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {})
         console.table(res);
         mainMenu();
     });
@@ -411,8 +413,9 @@ function displayEmployees() {
 
 //displays roles
 function displayRoles() {
-    console.log("============================= Roles =============================");
     qGetRoles().then(function (res) {
+        console.log("=========================== Roles ===========================");
+        res = res.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {})
         console.table(res);
         mainMenu();
     });
@@ -420,8 +423,9 @@ function displayRoles() {
 
 //displays department
 function displayDepartments(dept) {
-    console.log("========= Departments ==========");
     qGetDepartments().then(function (res) {
+        console.log("======= Departments ========");
+        res = res.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {})
         console.table(res);
         mainMenu();
     });
