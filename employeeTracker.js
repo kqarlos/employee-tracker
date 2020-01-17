@@ -12,7 +12,7 @@ var menu = {
         "Add Employee",
         "Remove Employee",
         "Update Employee Role",
-        // "Update Employee Manager",
+        "Update Employee Manager",
         "View All Roles",
         "Add Role",
         // "Remove Role",
@@ -60,6 +60,7 @@ function mainMenu() {
                 updateEmployeeRole();
                 break;
             case "Update Employee Manager":
+                updateEmployeeManager();
                 break;
             case "View All Roles":
                 displayRoles();
@@ -87,13 +88,27 @@ function mainMenu() {
     });
 }
 
+
+function updateEmployeeManager() {
+    qGetEmployees().then(function (employees) {
+        promptSelectEmployee(employees).then(function (employeeid) {
+            promptSelectEmployee(employees).then(function (managerid) {
+                qUpdateEmployeeManager(employeeid, managerid);
+            })
+        })
+    })
+}
+
 //Calls to get employees and roles. Calls to prompt user to select an employee.
 //Calls to prompt user to select a  role to update the selected employee's role
+//Calls to update employee with employee id and new role id
 function updateEmployeeRole() {
     qGetEmployees().then(function (employees) {
         qGetRoles().then(function (roles) {
-            promptSelectEmployees(employees).then(function (employeeid) {
-                promptUpdateRole(employeeid, roles);
+            promptSelectEmployee(employees).then(function (employeeid) {
+                promptSelectRole(roles).then(function (roleid) {
+                    qUpdateEmployeeRole(employeeid, roleid);
+                });
             });
         });
     });
@@ -103,7 +118,7 @@ function updateEmployeeRole() {
 //Calls to remove employee based on the user's employee choice
 function removeEmployee() {
     qGetEmployees().then(function (employees) {
-        promptSelectEmployees(employees).then(function (employeeid) {
+        promptSelectEmployee(employees).then(function (employeeid) {
             qRemoveEmployee(employeeid);
         });
     })
@@ -148,6 +163,17 @@ function qRemoveEmployee(employeeid) {
 function qUpdateEmployeeRole(employeeid, roleid) {
     console.log("Querying: Updating employee role");
     connection.query("UPDATE employee SET role_id = ? WHERE id = ?", [roleid, employeeid], function (err, res) {
+        if (err) throw err;
+        mainMenu();
+    });
+}
+
+//queries to update employee manager
+//@param employeedid - id of employee to update role to
+//@param manager - id of the employee's new manager
+function qUpdateEmployeeManager(employeeid, managerid) {
+    console.log("Querying: Updating employee manager");
+    connection.query("UPDATE employee SET manager_id = ? WHERE id = ?", [managerid, employeeid], function (err, res) {
         if (err) throw err;
         mainMenu();
     });
@@ -304,7 +330,7 @@ function promptRoleInfo() {
 //Asks user to select an employee by getting list of employee names
 //This resolves once the user selects an employee name and this name is mapped to the employee id.
 //@param employees - list of objects with employee information
-function promptSelectEmployees(employees) {
+function promptSelectEmployee(employees) {
     console.log("prompting to select an employee...");
     return new Promise(function (resolve, reject) {
         if (!employees) return reject(Error("No employees found!"));
@@ -326,26 +352,27 @@ function promptSelectEmployees(employees) {
     });
 }
 
-//Asks user to choose a new role to update the employee
-//Calls to query update employee
-function promptUpdateRole(employeeid, roles) {
-    let roleTitles = roles.map(r => {
-        return (r.title);
-    });
+//Asks user to choose a new role and returns it
+//@param roles - arry of role objects
+function promptSelectRole(roles) {
     console.log("Prompting to select a new employee role...");
-    inquirer.prompt({
-        type: "list",
-        name: "role",
-        message: "Choose a new role",
-        choices: roleTitles
-    }).then(function (res) {
-        var roleid;
-        roles.forEach(r => {
-            if (r.title === res.role) {
-                roleid = r.id;
-            }
+    return new Promise(function (resolve, reject) {
+        if (!roles) return reject(Error("No roles found!"));
+        let roleTitles = roles.map(r => {
+            return (r.title);
         });
-        qUpdateEmployeeRole(employeeid, roleid);
+        inquirer.prompt({
+            type: "list",
+            name: "role",
+            message: "Choose a new role",
+            choices: roleTitles
+        }).then(function (res) {
+            roles.forEach(r => {
+                if (r.title === res.role) {
+                    resolve(r.id);
+                }
+            });
+        });
     });
 }
 
