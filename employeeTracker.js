@@ -91,7 +91,11 @@ function mainMenu() {
 //queries all employees
 function qGetEmployees(cb) {
     console.log("Querying all employees...");
-    cb();
+    connection.query("SELECT * FROM Employee", function (err, res) {
+        if (err) throw err;
+        cb(res);
+
+    });
 }
 
 //queries to add employee
@@ -109,7 +113,10 @@ function qUpdateEmployeeRole() {
 //queries to view roles
 function qGetRoles(cb) {
     console.log("Querying all roles");
-    cb();
+    connection.query("SELECT * FROM Role", function (err, res) {
+        if (err) throw err;
+        cb(res);
+    });
 }
 
 //queries to add new role
@@ -121,7 +128,10 @@ function qAddRole() {
 //queries all departments
 function qGetDepartments() {
     console.log("Querying all departments");
-    displayDepartments();
+    connection.query("SELECT * FROM Department", function (err, res) {
+        if (err) throw err;
+        displayDepartments(res);
+    });
 }
 
 //Queries to add a new department
@@ -154,12 +164,12 @@ function promptRoleInfo() {
 }
 
 //Asks user to select an employee
-function promptSelectEmployees() {
+function promptSelectEmployees(employees) {
     console.log("prompting to select an employee...");
     qGetRoles(promptUpdateRole);
 }
 //Asks user to choose a new role to update the employee role
-function promptUpdateRole() {
+function promptUpdateRole(roles) {
     console.log("Prompting to select a new employee role...");
     qUpdateEmployeeRole();
 
@@ -168,20 +178,23 @@ function promptUpdateRole() {
 //DISPLAY ==========================================
 
 //displays employees
-function displayEmployees() {
-    console.log("Displaying Employees...");
+function displayEmployees(employees) {
+    console.log("=========================== Employees ===========================");
+    console.table(employees);
     mainMenu();
 }
 
 //displays roles
-function displayRoles() {
-    console.log("Displaying Roles...");
+function displayRoles(roles) {
+    console.log("============================= Roles =============================");
+    console.table(roles);
     mainMenu();
 }
 
 //displays department
-function displayDepartments() {
-    console.log("Displaying Departments...");
+function displayDepartments(dept) {
+    console.log("========= Departments ==========");
+    console.table(dept);
     mainMenu();
 }
 
