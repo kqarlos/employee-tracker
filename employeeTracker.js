@@ -69,7 +69,7 @@ function mainMenu() {
             case "Remove Role":
                 break;
             case "View All Departments":
-                qGetDepartments();
+                displayDepartments();
                 break;
             case "Add Department":
                 promptDepartmentInfo();
@@ -120,7 +120,7 @@ function qGetRoles() {
     console.log("Querying all roles");
     return new Promise(function (resolve, reject) {
         connection.query("SELECT * FROM Role", function (err, res) {
-            if (err) return reject(Error("Invalid URL!"));;
+            if (err) return reject(Error(err));;
             resolve(res);
         });
     });
@@ -138,16 +138,21 @@ function qAddRole(role) {
 //queries all departments
 function qGetDepartments() {
     console.log("Querying all departments");
-    connection.query("SELECT * FROM Department", function (err, res) {
-        if (err) throw err;
-        displayDepartments(res);
+    return new Promise(function (resolve, reject) {
+        connection.query("SELECT * FROM Department", function (err, res) {
+            if (err) return reject(Error(err));;
+            resolve(res);
+        });
     });
 }
 
 //Queries to add a new department
-function qAddDepartment() {
+function qAddDepartment(department) {
     console.log("Querying: add department");
-    mainMenu();
+    connection.query("INSERT INTO department(name) VALUES (?)", department, function (err, res) {
+        if (err) throw err;
+        mainMenu();
+    });
 }
 
 
@@ -184,39 +189,65 @@ function promptForEmployeeinfo() {
 
 //Ask user for informatino of the new department to add
 function promptDepartmentInfo() {
-    console.log("Prompting employee info to add");
-    qAddDepartment();
+    console.log("Prompting department info to add");
+
+    inquirer.prompt(
+        {
+            type: "input",
+            message: "Enter department name: ",
+            name: "name"
+        }
+    ).then(function (res) {
+        qAddDepartment([
+            res.name
+        ]);
+    });
+
+
 
 }
 
 //Ask user for information of the new role to add
 function promptRoleInfo() {
     console.log("Prompting for new role informatin to add");
+    qGetDepartments().then(function (departments) {
+        let departmentNames = departments.map(d => {
+            return (d.name);
+        });
+        inquirer.prompt([
+            {
+                type: "input",
+                message: "Enter role title: ",
+                name: "title"
+            },
+            {
+                type: "input",
+                message: "Enter role salary: ",
+                name: "salary"
+            },
+            {
+                type: "list",
+                message: "Select: ",
+                name: "department",
+                choices: departmentNames
+            }
+        ]).then(function (res) {
+            let departmentid;
+            departments.forEach(d => {
+                if (d.name === res.department) {
+                    departmentid = d.id;
+                }
+            });
+            qAddRole([
+                res.title,
+                res.salary,
+                departmentid
+            ]);
+        });
 
-    inquirer.prompt([
-        {
-            type: "input",
-            message: "Enter role title: ",
-            name: "title"
-        },
-        {
-            type: "input",
-            message: "Enter role salary: ",
-            name: "salary"
-        },
-        {
-            type: "input",
-            message: "Enter department id: ",
-            name: "departmentid"
-        }
-    ]).then(function (res) {
-        qAddRole([
-            res.title,
-            res.salary,
-            res.departmentid
-        ]);
+
+
     });
-
 }
 
 //Asks user to select an employee
@@ -238,7 +269,6 @@ function promptSelectEmployees(employees) {
                 employeeid = e.id;
             }
         });
-
         qGetRoles().then(function (roles) {
             promptUpdateRole(employeeid, roles);
         });
@@ -247,8 +277,6 @@ function promptSelectEmployees(employees) {
 
 //Asks user to choose a new role to update the employee role
 function promptUpdateRole(employeeid, roles) {
-    // console.log(employeeid);
-    // console.log(roles);
     let roleTitles = roles.map(r => {
         return (r.title);
     });
@@ -292,8 +320,10 @@ function displayRoles() {
 //displays department
 function displayDepartments(dept) {
     console.log("========= Departments ==========");
-    console.table(dept);
-    mainMenu();
+    qGetDepartments().then(function (res) {
+        console.table(res);
+        mainMenu();
+    });
 }
 
 
