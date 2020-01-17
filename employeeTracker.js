@@ -99,9 +99,12 @@ function qGetEmployees(cb) {
 }
 
 //queries to add employee
-function qAddEmployee() {
+function qAddEmployee(employee) {
     console.log("Querying: add employee...");
-    mainMenu();
+    connection.query("INSERT INTO employee(first_name, last_name, role_id) VALUES (?, ?, ?)", employee, function (err, res) {
+        if (err) throw err;
+        mainMenu();
+    })
 }
 
 //queries to update employee role
@@ -141,12 +144,34 @@ function qAddDepartment() {
 }
 
 
-//PROMPTS ====================================
+//PROMPTS ===============================================
 
 //Ask user for information of the new employee to add
 function promptForEmployeeinfo() {
     console.log("Prompting employee info to add");
-    qAddEmployee();
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "Enter first name: ",
+            name: "firstName"
+        },
+        {
+            type: "input",
+            message: "Enter last name: ",
+            name: "lastName"
+        },
+        {
+            type: "input",
+            message: "Enter role: ",
+            name: "role"
+        }
+    ]).then(function (res) {
+        qAddEmployee([
+            res.firstName,
+            res.lastName,
+            res.role
+        ]);
+    });
 
 }
 
