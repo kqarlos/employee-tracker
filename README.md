@@ -19,6 +19,12 @@ node server.js
 
 ## Site Pictures
 
+![Site](assets/images/tables.png)
+
+![Site](assets/images/updatemanager.png)
+
+![Site](assets/images/removee.png)
+
 ![Site](assets/images/live.gif)
 
 ## Code Snippets
