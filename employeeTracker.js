@@ -19,7 +19,7 @@ var menu = {
         "View All Departments",
         "Add Department",
         "Remove Department",
-        // "View Department Budget",
+        "View Department Budget",
         "Exit"
     ]
 }
@@ -81,12 +81,28 @@ function mainMenu() {
                 removeDepartment();
                 break;
             case "View Department Budget":
+                viewDepartmentBudget();
                 break;
             case "Exit":
                 console.log("Closing connection... Goodbye!");
                 connection.end();
                 break;
         }
+    });
+}
+
+//Calls to get and ask user for department. Sums all salieries from all employees working at that department
+function viewDepartmentBudget() {
+    qGetDepartments().then(function (departments) {
+        promptSelectDepartment(departments).then(function (departmentid) {
+            connection.query("SELECT SUM(role.salary) FROM employee INNER JOIN role on employee.role_id = role.id AND department_id=?", departmentid, function (err, res) {
+                if (err) throw (err);
+                console.log("Department Budget: ");
+                console.table(res[0]);
+                mainMenu();
+            });
+
+        });
     });
 }
 
@@ -109,9 +125,9 @@ function updateEmployeeManager() {
             console.log("Select employee's manager");
             promptSelectEmployee(employees).then(function (managerid) {
                 qUpdateEmployeeManager(employeeid, managerid);
-            })
-        })
-    })
+            });
+        });
+    });
 }
 
 //Calls to get employees and roles. Calls to prompt user to select an employee.
@@ -140,6 +156,7 @@ function removeEmployee() {
     })
 }
 
+//Calls to get roles and to prompt user to select a role. Calls to remove role based on the returned role id
 function removeRole() {
     qGetRoles().then(function (roles) {
         promptSelectRole(roles).then(function (roleid) {
@@ -148,6 +165,8 @@ function removeRole() {
     });
 }
 
+//Calls to get department and to prompt user to select a department
+//Calls to remove department based on returned department id
 function removeDepartment() {
     qGetDepartments().then(function (departments) {
         promptSelectDepartment(departments).then(function (departmentid) {
@@ -156,6 +175,8 @@ function removeDepartment() {
     });
 }
 
+//Calls to get roles and prompt user to select a department
+//Calls to ask the user for the rest of the new role information
 function addRole() {
     qGetDepartments().then(function (departments) {
         promptSelectDepartment(departments).then(function (departmentid) {
@@ -165,6 +186,17 @@ function addRole() {
 }
 
 //==================================== QUERIES ===================================
+
+//querie get department tickets
+function qGetDepartmentBudget() {
+    console.log("Getting department budget...");
+    return new Promise(function (resolve, reject) {
+        connection.query("", function (err, res) {
+            if (err) reject(err);
+            resolve(res);
+        });
+    });
+}
 
 //queries all employees
 function qGetEmployees() {
