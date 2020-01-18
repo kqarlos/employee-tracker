@@ -7,7 +7,7 @@ var menu = {
     message: "What would you like to do?",
     choices: [
         "View All Employees",
-        // "View All Employees by Department",
+        "View All Employees by Department",
         // "View All Employees by Manager",
         "Add Employee",
         "Remove Employee",
@@ -47,6 +47,7 @@ function mainMenu() {
                 displayEmployees();
                 break;
             case "View All Employees by Department":
+                viewEmployeesDept();
                 break;
             case "View All Employees by Manager":
                 break;
@@ -88,21 +89,6 @@ function mainMenu() {
                 connection.end();
                 break;
         }
-    });
-}
-
-//Calls to get and ask user for department. Sums all salieries from all employees working at that department
-function viewDepartmentBudget() {
-    qGetDepartments().then(function (departments) {
-        promptSelectDepartment(departments).then(function (departmentid) {
-            connection.query("SELECT SUM(role.salary) FROM employee INNER JOIN role on employee.role_id = role.id AND department_id=?", departmentid, function (err, res) {
-                if (err) throw (err);
-                console.log("Department Budget: ");
-                console.table(res[0]);
-                mainMenu();
-            });
-
-        });
     });
 }
 
@@ -187,7 +173,36 @@ function addRole() {
 
 //==================================== QUERIES ===================================
 
-//querie get department tickets
+//Calls to get and ask user to select a department. 
+//Queries to select employee info and role info where the role is part of chosen department
+function viewEmployeesDept() {
+    qGetDepartments().then(function (departments) {
+        promptSelectDepartment(departments).then(function (departmentid) {
+            connection.query("SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, employee.manager_id, role.title, role.salary FROM employee INNER JOIN role on employee.role_id = role.id AND department_id=?", departmentid, function (err, res) {
+                res = res.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {});
+                console.table(res);
+                mainMenu();
+            })
+        });
+    });
+}
+
+//Calls to get and ask user for department. Sums all salieries from all employees working at that department
+function viewDepartmentBudget() {
+    qGetDepartments().then(function (departments) {
+        promptSelectDepartment(departments).then(function (departmentid) {
+            connection.query("SELECT SUM(role.salary) FROM employee INNER JOIN role on employee.role_id = role.id AND department_id=?", departmentid, function (err, res) {
+                if (err) throw (err);
+                console.log("Department Budget: ");
+                console.table(res[0]);
+                mainMenu();
+            });
+
+        });
+    });
+}
+
+//query get department tickets
 function qGetDepartmentBudget() {
     console.log("Getting department budget...");
     return new Promise(function (resolve, reject) {
@@ -477,7 +492,7 @@ function promptSelectDepartment(departments) {
 function displayEmployees() {
     qGetEmployees().then(function (res) {
         console.log("======================== Employees =========================");
-        res = res.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {})
+        res = res.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {});
         console.table(res);
         mainMenu();
     });
@@ -487,7 +502,7 @@ function displayEmployees() {
 function displayRoles() {
     qGetRoles().then(function (res) {
         console.log("=========================== Roles ===========================");
-        res = res.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {})
+        res = res.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {});
         console.table(res);
         mainMenu();
     });
@@ -497,7 +512,7 @@ function displayRoles() {
 function displayDepartments(dept) {
     qGetDepartments().then(function (res) {
         console.log("======= Departments ========");
-        res = res.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {})
+        res = res.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {});
         console.table(res);
         mainMenu();
     });

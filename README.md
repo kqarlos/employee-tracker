@@ -19,18 +19,7 @@ node server.js
 
 ## Site Pictures
 
-1. 
-
-![Site](assets/images/.png)
-
-2. 
-
-![Site](assets/images/.png)
-
-
-3. 
-
-![Site](assets/images/.png)
+![Site](assets/images/live.gif)
 
 ## Code Snippets
 
