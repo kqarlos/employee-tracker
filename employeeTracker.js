@@ -245,8 +245,9 @@ function promptForEmployeeinfo(roles, managers) {
         return (r.title);
     });
     let managerNames = managers.map(m => {
-        return (m.first_name);
+        return (m.first_name + " " + m.last_name);
     });
+    managerNames.push("No Manager");
     inquirer.prompt([
         {
             type: "input",
@@ -279,11 +280,10 @@ function promptForEmployeeinfo(roles, managers) {
         });
         var managerid;
         managers.forEach(m => {
-            if (m.name === res.name) {
+            if ((m.first_name + " " + m.last_name) === res.manager) {
                 managerid = m.id;
             }
         });
-
         qAddEmployee([
             res.firstName,
             res.lastName,
@@ -358,7 +358,7 @@ function promptSelectEmployee(employees) {
     return new Promise(function (resolve, reject) {
         if (!employees) return reject(Error("No employees found!"));
         let names = employees.map(e => {
-            return (e.first_name);
+            return (e.first_name + " " + e.last_name);
         });
         inquirer.prompt({
             type: "list",
@@ -367,7 +367,7 @@ function promptSelectEmployee(employees) {
             choices: names
         }).then(function (res) {
             employees.forEach(e => {
-                if (e.first_name === res.employeeName) {
+                if ((e.first_name + " " + e.last_name) === res.employeeName) {
                     resolve(e.id);
                 }
             });

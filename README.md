@@ -1,5 +1,7 @@
 # Employee Tracker
 
+Keep track of your company's employees, roles, and departments. This console application will manage your data with a simple I/O interface.
+
 ## Getting Started
 
 Steps to run application:
