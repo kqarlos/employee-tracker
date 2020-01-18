@@ -15,12 +15,12 @@ var menu = {
         "Update Employee Manager",
         "View All Roles",
         "Add Role",
-        // "Remove Role",
+        "Remove Role",
         "View All Departments",
         "Add Department",
+        "Remove Department",
+        // "View Department Budget",
         "Exit"
-        // "Remove Department",
-        // "View Department Budget"
     ]
 }
 //create connection information to sql database
@@ -66,9 +66,10 @@ function mainMenu() {
                 displayRoles();
                 break;
             case "Add Role":
-                promptRoleInfo();
+                addRole();
                 break;
             case "Remove Role":
+                removeRole();
                 break;
             case "View All Departments":
                 displayDepartments();
@@ -77,11 +78,12 @@ function mainMenu() {
                 promptDepartmentInfo();
                 break;
             case "Remove Department":
+                removeDepartment();
                 break;
             case "View Department Budget":
                 break;
             case "Exit":
-                console.log("Closing connection...");
+                console.log("Closing connection... Goodbye!");
                 connection.end();
                 break;
         }
@@ -92,8 +94,10 @@ function mainMenu() {
 function addEmployee() {
     qGetEmployees().then(function (managers) {
         qGetRoles().then(function (roles) {
-            promptForEmployeeinfo(roles, managers);
-        })
+            promptSelectRole(roles).then(function (roleid) {
+                promptForEmployeeinfo(roleid, managers);
+            });
+        });
     });
 }
 
@@ -136,6 +140,30 @@ function removeEmployee() {
     })
 }
 
+function removeRole() {
+    qGetRoles().then(function (roles) {
+        promptSelectRole(roles).then(function (roleid) {
+            qRemoveRole(roleid);
+        });
+    });
+}
+
+function removeDepartment() {
+    qGetDepartments().then(function (departments) {
+        promptSelectDepartment(departments).then(function (departmentid) {
+            qRemoveDepartment(departmentid);
+        });
+    });
+}
+
+function addRole() {
+    qGetDepartments().then(function (departments) {
+        promptSelectDepartment(departments).then(function (departmentid) {
+            promptRoleInfo(departmentid);
+        });
+    });
+}
+
 //==================================== QUERIES ===================================
 
 //queries all employees
@@ -164,6 +192,26 @@ function qAddEmployee(employee) {
 function qRemoveEmployee(employeeid) {
     console.log("Removing employee...");
     connection.query("DELETE FROM employee WHERE id=?", employeeid, function (err, res) {
+        if (err) throw err;
+        mainMenu();
+    });
+}
+
+//queries to remove role 
+//@param roleid - roleid to remove
+function qRemoveRole(roleid) {
+    console.log("Removing role...");
+    connection.query("DELETE FROM role WHERE id=?", roleid, function (err, res) {
+        if (err) throw err;
+        mainMenu();
+    });
+}
+
+//queries to remove department 
+//@param departmentid - departmentid to remove
+function qRemoveDepartment(departmentid) {
+    console.log("Removing department...");
+    connection.query("DELETE FROM department WHERE id=?", departmentid, function (err, res) {
         if (err) throw err;
         mainMenu();
     });
@@ -239,11 +287,8 @@ function qAddDepartment(department) {
 //Ask user for information of the new employee to add
 //Gets all roles titles to let the user choose new employee's role
 //calls to query add employee
-function promptForEmployeeinfo(roles, managers) {
+function promptForEmployeeinfo(roleid, managers) {
     console.log("Enter new employee's information");
-    let roleNames = roles.map(r => {
-        return (r.title);
-    });
     let managerNames = managers.map(m => {
         return (m.first_name + " " + m.last_name);
     });
@@ -261,23 +306,11 @@ function promptForEmployeeinfo(roles, managers) {
         },
         {
             type: "list",
-            message: "Select role: ",
-            name: "role",
-            choices: roleNames
-        },
-        {
-            type: "list",
             message: "Select manager: ",
             name: "manager",
             choices: managerNames
         }
     ]).then(function (res) {
-        var roleid;
-        roles.forEach(r => {
-            if (r.title === res.role) {
-                roleid = r.id;
-            }
-        });
         var managerid;
         managers.forEach(m => {
             if ((m.first_name + " " + m.last_name) === res.manager) {
@@ -312,42 +345,25 @@ function promptDepartmentInfo() {
 //Ask user for information of the new role to add
 //Gets department names to let the user choose the role department
 //Calls to query add role
-function promptRoleInfo() {
+function promptRoleInfo(departmentid) {
     console.log("Enter new role's information");
-    qGetDepartments().then(function (departments) {
-        let departmentNames = departments.map(d => {
-            return (d.name);
-        });
-        inquirer.prompt([
-            {
-                type: "input",
-                message: "Enter role title: ",
-                name: "title"
-            },
-            {
-                type: "input",
-                message: "Enter role salary: ",
-                name: "salary"
-            },
-            {
-                type: "list",
-                message: "Select: ",
-                name: "department",
-                choices: departmentNames
-            }
-        ]).then(function (res) {
-            let departmentid;
-            departments.forEach(d => {
-                if (d.name === res.department) {
-                    departmentid = d.id;
-                }
-            });
-            qAddRole([
-                res.title,
-                res.salary,
-                departmentid
-            ]);
-        });
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "Enter role title: ",
+            name: "title"
+        },
+        {
+            type: "input",
+            message: "Enter role salary: ",
+            name: "salary"
+        }
+    ]).then(function (res) {
+        qAddRole([
+            res.title,
+            res.salary,
+            departmentid
+        ]);
     });
 }
 
@@ -376,7 +392,7 @@ function promptSelectEmployee(employees) {
 }
 
 //Asks user to choose a new role and returns it
-//@param roles - arry of role objects
+//@param roles - array of role objects
 function promptSelectRole(roles) {
     console.log("Select employee role...");
     return new Promise(function (resolve, reject) {
@@ -387,12 +403,36 @@ function promptSelectRole(roles) {
         inquirer.prompt({
             type: "list",
             name: "role",
-            message: "Choose a new role",
+            message: "Choose a role",
             choices: roleTitles
         }).then(function (res) {
             roles.forEach(r => {
                 if (r.title === res.role) {
                     resolve(r.id);
+                }
+            });
+        });
+    });
+}
+
+//Asks user to choose a department and returns it
+//@param departments - array of department objects
+function promptSelectDepartment(departments) {
+    console.log("Select department...");
+    return new Promise(function (resolve, reject) {
+        if (!departments) return reject(Error("No departments found!"));
+        let deptNames = departments.map(d => {
+            return (d.name);
+        });
+        inquirer.prompt({
+            type: "list",
+            name: "department",
+            message: "Choose a department",
+            choices: deptNames
+        }).then(function (res) {
+            departments.forEach(d => {
+                if (d.name === res.department) {
+                    resolve(d.id);
                 }
             });
         });

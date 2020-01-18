@@ -153,10 +153,8 @@ function qAddEmployee(employee) {
 * [Bootstrap](https://getbootstrap.com/)
 * [Javascript](https://www.javascript.com/)
 * [Node.js](https://nodejs.org/en/)
-
-## Deployed Link
-
-* [See Live Site](https://kqarlos.github.io/employee-tracker)
+* [Express](https://www.npmjs.com/package/express)
+* [MySQL](https://www.mysql.com/)
 
 ## Author
 
