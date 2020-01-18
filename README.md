@@ -19,11 +19,19 @@ node server.js
 
 ## Site Pictures
 
+1. Displaying tables
+
 ![Site](assets/images/tables.png)
+
+2. Updating employee manager example
 
 ![Site](assets/images/updatemanager.png)
 
+3. Removing employee example
+
 ![Site](assets/images/removee.png)
+
+4. Working app
 
 ![Site](assets/images/live.gif)
 
