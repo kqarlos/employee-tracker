@@ -13,7 +13,7 @@ Steps to run application:
 ```
 git clone git@github.com:kqarlos/employee-tracker.git
 npm install
-node server.js
+node employeeTracker.js
 
 ```
 
