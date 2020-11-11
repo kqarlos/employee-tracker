@@ -2,7 +2,6 @@ DROP DATABASE IF EXISTS etracker_DB;
 CREATE DATABASE etracker_DB;
 USE etracker_DB;
 
-
 CREATE TABLE Department
 (
     id INT NOT NULL AUTO_INCREMENT,
@@ -29,7 +28,6 @@ CREATE TABLE Employee
 	FOREIGN KEY (role_id) REFERENCES Role(id),
     FOREIGN KEY (manager_id) REFERENCES Employee(id)
 );
-
 
 
 INSERT INTO Department (name) VALUES
