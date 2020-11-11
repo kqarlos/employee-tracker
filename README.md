@@ -1,8 +1,22 @@
 # Employee Tracker
 
+## Description
+
 Keep track of your company's employees, roles, and departments. This console application will manage your data with a simple I/O interface.
 
-## Getting Started
+## Table of Contents (Optional)
+
+If your README is very long, add a table of contents to make it easy for users to find what they need.
+
+* [Installation](#installation)
+* [Usage](#usage)
+    * [Screenshots](#screenshots)
+    * [Snippets](#snippets)
+* [Credits](#credits)
+* [License](#license)
+
+
+## Installation
 
 Steps to run application:
 1. Clone git repository
@@ -16,8 +30,9 @@ npm install
 node employeeTracker.js
 
 ```
+## Usage
 
-## Site Pictures
+### Screenshots
 
 1. Displaying tables
 
@@ -35,7 +50,7 @@ node employeeTracker.js
 
 ![Site](assets/images/live.gif)
 
-## Code Snippets
+### Snippets
 
 
 1. Workflow to add employee
@@ -169,7 +184,15 @@ function qAddEmployee(employee) {
 ```
 * This function reciees an array of employee information. This arraay is used to insert a new employee into the +employees_ table. After the query is performed, a call to get back to the main menu is performed.
 
-## Built With
+## Credits
+
+### Authors
+
+- Carlos Toledo: [portfolio](https://professional-portfolio2020.herokuapp.com/)
+- Github: [kqarlos](https://www.github.com/kqarlos)
+- LinkedIn: [carlos-toledo415](https://www.linkedin.com/in/carlos-toledo415/)
+
+### Built With
 
 * [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML)
 * [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)
@@ -178,20 +201,10 @@ function qAddEmployee(employee) {
 * [Node.js](https://nodejs.org/en/)
 * [Express](https://www.npmjs.com/package/express)
 * [MySQL](https://www.mysql.com/)
-
-## Author
-
- * **Carlos Toledo** 
-
-## Links
-
-- [Link to site repository](https://github.com/kqarlos/employee-tracker)
-- [Link to Github](https://www.github.com/kqarlos)
-- [Link to LinkedIn](https://www.linkedin.com/in/carlos-toledo415/)
-
-
-## Acknowledgments
-
 * [W3 Schools](https://www.w3schools.com/)
 * [Bootstrap components](https://getbootstrap.com/docs/4.4/components/navbar/)
 * [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model)
+
+## License
+
+![GitHub](https://img.shields.io/github/license/kqarlos/code-quiz)
