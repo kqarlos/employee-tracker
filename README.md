@@ -12,6 +12,7 @@ Keep track of your company's employees, roles, and departments. This console app
     * [Snippets](#snippets)
 * [Credits](#credits)
 * [License](#license)
+* [Badges](#Badges)
 
 
 ## Installation
@@ -209,13 +210,10 @@ function qAddEmployee(employee) {
 
 ## Badges
 
-![NPM Inquierer Version](https://img.shields.io/npm/v/inquirer)
-![Github Release](https://img.shields.io/github/v/release/kqarlos/employee-tracker)
-![Languages](https://img.shields.io/github/languages/count/kqarlos/employee-tracker)
-![Language](https://img.shields.io/github/languages/top/kqarlos/employee-tracker)
-![Code Size](https://img.shields.io/github/languages/code-size/kqarlos/employee-tracker)
-![File Count](https://img.shields.io/github/directory-file-count/kqarlos/employee-tracker)
-![Repo Size](https://img.shields.io/github/repo-size/kqarlos/employee-tracker)
-![Total Lines](https://img.shields.io/tokei/lines/github/kqarlos/employee-tracker)
-![Inquirer V](https://img.shields.io/github/package-json/dependency-version/kqarlos/employee-tracker/inquirer)
-![Inquirer V](https://img.shields.io/github/package-json/dependency-version/kqarlos/employee-tracker/mysql)
+* ![Languages](https://img.shields.io/github/languages/count/kqarlos/employee-tracker)
+* ![Language](https://img.shields.io/github/languages/top/kqarlos/employee-tracker)
+* ![Code Size](https://img.shields.io/github/languages/code-size/kqarlos/employee-tracker)
+* ![Repo Size](https://img.shields.io/github/repo-size/kqarlos/employee-tracker)
+* ![Total Lines](https://img.shields.io/tokei/lines/github/kqarlos/employee-tracker)
+* ![Inquirer V](https://img.shields.io/github/package-json/dependency-version/kqarlos/employee-tracker/inquirer)
+* ![Mysql V](https://img.shields.io/github/package-json/dependency-version/kqarlos/employee-tracker/mysql)
