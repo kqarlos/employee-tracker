@@ -16,7 +16,7 @@
     "url": "git+https://github.com/kqarlos/employee-tracker.git"
   },
   "author": "Carlos Toledo",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/kqarlos/employee-tracker/issues"
   },

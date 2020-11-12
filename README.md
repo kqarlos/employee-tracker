@@ -217,4 +217,6 @@ function qAddEmployee(employee) {
 * ![Total Lines](https://img.shields.io/tokei/lines/github/kqarlos/employee-tracker)
 * ![Inquirer V](https://img.shields.io/github/package-json/dependency-version/kqarlos/employee-tracker/inquirer)
 * ![Mysql V](https://img.shields.io/github/package-json/dependency-version/kqarlos/employee-tracker/mysql)
+* ![Last Commit](https://img.shields.io/github/last-commit/kqarlos/employee-tracker)
 * [![HitCount](http://hits.dwyl.com/kqarlos/employee-tracker.svg)](http://hits.dwyl.com/kqarlos/employee-tracker)
+* ![Followers](https://img.shields.io/github/followers/kqarlos?style=social)
