@@ -6,8 +6,6 @@ Keep track of your company's employees, roles, and departments. This console app
 
 ## Table of Contents
 
-If your README is very long, add a table of contents to make it easy for users to find what they need.
-
 * [Installation](#installation)
 * [Usage](#usage)
     * [Screenshots](#screenshots)
@@ -186,7 +184,7 @@ function qAddEmployee(employee) {
 
 ## Credits
 
-### Authors
+### Author
 
 - Carlos Toledo: [portfolio](https://professional-portfolio2020.herokuapp.com/)
 - Github: [kqarlos](https://www.github.com/kqarlos)
@@ -207,4 +205,17 @@ function qAddEmployee(employee) {
 
 ## License
 
-![GitHub](https://img.shields.io/github/license/kqarlos/code-quiz)
+![MIT License](https://img.shields.io/github/license/kqarlos/employee-tracker)
+
+## Badges
+
+![NPM Inquierer Version](https://img.shields.io/npm/v/inquirer)
+![Github Release](https://img.shields.io/github/v/release/kqarlos/employee-tracker)
+![Languages](https://img.shields.io/github/languages/count/kqarlos/employee-tracker)
+![Language](https://img.shields.io/github/languages/top/kqarlos/employee-tracker)
+![Code Size](https://img.shields.io/github/languages/code-size/kqarlos/employee-tracker)
+![File Count](https://img.shields.io/github/directory-file-count/kqarlos/employee-tracker)
+![Repo Size](https://img.shields.io/github/repo-size/kqarlos/employee-tracker)
+![Total Lines](https://img.shields.io/tokei/lines/github/kqarlos/employee-tracker)
+![Inquirer V](https://img.shields.io/github/package-json/dependency-version/kqarlos/employee-tracker/inquirer)
+![Inquirer V](https://img.shields.io/github/package-json/dependency-version/kqarlos/employee-tracker/mysql)
