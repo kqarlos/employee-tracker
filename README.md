@@ -1,5 +1,15 @@
 # Employee Tracker
 
+![Languages](https://img.shields.io/github/languages/count/kqarlos/employee-tracker)
+![Language](https://img.shields.io/github/languages/top/kqarlos/employee-tracker)
+![Code Size](https://img.shields.io/github/languages/code-size/kqarlos/employee-tracker)
+![Repo Size](https://img.shields.io/github/repo-size/kqarlos/employee-tracker)
+![Total Lines](https://img.shields.io/tokei/lines/github/kqarlos/employee-tracker)
+![Inquirer V](https://img.shields.io/github/package-json/dependency-version/kqarlos/employee-tracker/inquirer)
+![Mysql V](https://img.shields.io/github/package-json/dependency-version/kqarlos/employee-tracker/mysql)
+![Last Commit](https://img.shields.io/github/last-commit/kqarlos/employee-tracker)
+![Followers](https://img.shields.io/github/followers/kqarlos?style=social)
+
 ## Description
 
 Keep track of your company's employees, roles, and departments. This console application will manage your data with a simple I/O interface.
@@ -12,7 +22,6 @@ Keep track of your company's employees, roles, and departments. This console app
     * [Snippets](#snippets)
 * [Credits](#credits)
 * [License](#license)
-* [Badges](#Badges)
 
 
 ## Installation
@@ -208,15 +217,3 @@ function qAddEmployee(employee) {
 
 ![MIT License](https://img.shields.io/github/license/kqarlos/employee-tracker)
 
-## Badges
-
-* ![Languages](https://img.shields.io/github/languages/count/kqarlos/employee-tracker)
-* ![Language](https://img.shields.io/github/languages/top/kqarlos/employee-tracker)
-* ![Code Size](https://img.shields.io/github/languages/code-size/kqarlos/employee-tracker)
-* ![Repo Size](https://img.shields.io/github/repo-size/kqarlos/employee-tracker)
-* ![Total Lines](https://img.shields.io/tokei/lines/github/kqarlos/employee-tracker)
-* ![Inquirer V](https://img.shields.io/github/package-json/dependency-version/kqarlos/employee-tracker/inquirer)
-* ![Mysql V](https://img.shields.io/github/package-json/dependency-version/kqarlos/employee-tracker/mysql)
-* ![Last Commit](https://img.shields.io/github/last-commit/kqarlos/employee-tracker)
-* [![HitCount](http://hits.dwyl.com/kqarlos/employee-tracker.svg)](http://hits.dwyl.com/kqarlos/employee-tracker)
-* ![Followers](https://img.shields.io/github/followers/kqarlos?style=social)
