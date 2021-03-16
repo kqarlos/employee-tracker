@@ -1,5 +1,5 @@
-var mysql = require("mysql");
 var inquirer = require("inquirer");
+const connection = require("./config/connection")
 
 var menu = {
     type: "list",
@@ -23,14 +23,6 @@ var menu = {
         "Exit"
     ]
 }
-//create connection information to sql database
-var connection = mysql.createConnection({
-    host: "localhost",
-    port: 3306,
-    user: "root",
-    password: "password",
-    database: "etracker_DB"
-});
 
 //Connect to the database
 connection.connect(function (err) {
