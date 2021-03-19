@@ -1,5 +1,7 @@
 var inquirer = require("inquirer");
 const connection = require("./config/connection")
+var DB = require("./db/index.js");
+
 
 var menu = {
     type: "list",
