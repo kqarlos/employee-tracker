@@ -1,14 +1,18 @@
-# Employee Tracker
+# Employee Tracker 👨‍💼👩‍💼 
 
-![Languages](https://img.shields.io/github/languages/count/kqarlos/employee-tracker)
-![Language](https://img.shields.io/github/languages/top/kqarlos/employee-tracker)
-![Code Size](https://img.shields.io/github/languages/code-size/kqarlos/employee-tracker)
-![Repo Size](https://img.shields.io/github/repo-size/kqarlos/employee-tracker)
-![Total Lines](https://img.shields.io/tokei/lines/github/kqarlos/employee-tracker)
-![Inquirer V](https://img.shields.io/github/package-json/dependency-version/kqarlos/employee-tracker/inquirer)
-![Mysql V](https://img.shields.io/github/package-json/dependency-version/kqarlos/employee-tracker/mysql)
-![Last Commit](https://img.shields.io/github/last-commit/kqarlos/employee-tracker)
-![Followers](https://img.shields.io/github/followers/kqarlos?style=social)
+</br>
+<p align="center">
+    <img src="https://img.shields.io/github/languages/count/kqarlos/employee-tracker?style=for-the-badge" alt="Languages" />
+    <img src="https://img.shields.io/github/languages/top/kqarlos/employee-tracker?style=for-the-badge" alt="Top Language" />
+    <img src="https://img.shields.io/github/languages/code-size/kqarlos/employee-tracker?style=for-the-badge" alt="Code Size" />
+    <img src="https://img.shields.io/github/repo-size/kqarlos/employee-tracker?style=for-the-badge" alt="Repo Size" />   
+    <img src="https://img.shields.io/tokei/lines/github/kqarlos/employee-tracker?style=for-the-badge" alt="Total Lines" />
+    <img src="https://img.shields.io/github/package-json/dependency-version/kqarlos/employee-tracker/mysql?style=for-the-badge" alt="MySQL Version" />
+    <img src="https://img.shields.io/github/package-json/dependency-version/kqarlos/employee-tracker/inquirer?style=for-the-badge" alt="Inquirer Version" />
+    <img src="https://img.shields.io/github/last-commit/kqarlos/employee-tracker?style=for-the-badge" alt="Last Commit" />  
+    <img src="https://img.shields.io/github/issues/kqarlos/employee-tracker?style=for-the-badge" alt="Issues" />  
+    <img src="https://img.shields.io/github/followers/kqarlos?style=social" alt="Followers" />  
+</p>
 
 ## Description
 
@@ -29,7 +33,7 @@ Keep track of your company's employees, roles, and departments. This console app
 Steps to run application:
 1. Clone git repository
 2. Install dependencies
-3. Create schema with given schema.sql, seed.sql, and employees.csv
+3. Create schema with given schema.sql, seed.sql
 4. run app
 
 ```
@@ -196,24 +200,26 @@ function qAddEmployee(employee) {
 
 ### Author
 
-- Carlos Toledo: [portfolio](https://professional-portfolio2020.herokuapp.com/)
-- Github: [kqarlos](https://www.github.com/kqarlos)
+- 💼 Carlos Toledo: [portfolio](https://professional-portfolio2020.herokuapp.com/)
+- :octocat: Github: [kqarlos](https://www.github.com/kqarlos)
 - LinkedIn: [carlos-toledo415](https://www.linkedin.com/in/carlos-toledo415/)
 
 ### Built With
 
-* [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML)
-* [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)
-* [Bootstrap](https://getbootstrap.com/)
-* [Javascript](https://www.javascript.com/)
-* [Node.js](https://nodejs.org/en/)
-* [Express](https://www.npmjs.com/package/express)
-* [MySQL](https://www.mysql.com/)
-* [W3 Schools](https://www.w3schools.com/)
-* [Bootstrap components](https://getbootstrap.com/docs/4.4/components/navbar/)
-* [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model)
+</br>
+<p align="center">
+    <a href="https://developer.mozilla.org/en-US/docs/Web/HTML"><img src="https://img.shields.io/badge/-HTML-orange?style=for-the-badge"  alt="HMTL" /></a>
+    <a href="https://developer.mozilla.org/en-US/docs/Web/CSS"><img src="https://img.shields.io/badge/-CSS-blue?style=for-the-badge" alt="CSS" /></a>
+    <a href="https://www.javascript.com/"><img src="https://img.shields.io/badge/-Javascript-yellow?style=for-the-badge" alt="Javascript" /></a>
+    <a href="https://getbootstrap.com/"><img src="https://img.shields.io/badge/-Bootstrap-blue?style=for-the-badge" alt="Bootstrap" /></a>
+    <a href="https://nodejs.org/en/"><img src="https://img.shields.io/badge/-Node-orange?style=for-the-badge" alt="Node" /></a>
+    <a href="https://www.npmjs.com/package/express"><img src="https://img.shields.io/badge/-Express-green?style=for-the-badge" alt="Express" /></a>
+    <a href="https://www.mysql.com/"><img src="https://img.shields.io/badge/-MySQL-blue?style=for-the-badge" alt="MySQL" /></a>
+</p>
 
 ## License
 
-![MIT License](https://img.shields.io/github/license/kqarlos/employee-tracker)
-
+</br>
+<p align="center">
+    <img align="center" src="https://img.shields.io/github/license/kqarlos/employee-tracker?style=for-the-badge" alt="MIT license" />
+</p>
