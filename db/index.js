@@ -16,9 +16,8 @@ class DB {
 
     getEmployeesByDepartment(departmentId, cb) {
         connection.query("SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, employee.manager_id, role.title, role.salary FROM employee INNER JOIN role on employee.role_id = role.id AND department_id=?", departmentId, function (err, res) {
-            res = res.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {});
-            console.table(res);
-            mainMenu();
+            if (err) throw err;
+            cb(res)
         })
     }
 
