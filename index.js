@@ -1,6 +1,6 @@
 var inquirer = require("inquirer");
 const connection = require("./config/connection")
-var DB = require("./db/index.js");
+var db = require("./db/index.js");
 
 
 var menu = {
@@ -27,11 +27,11 @@ var menu = {
 }
 
 //Connect to the database
-connection.connect(function (err) {
-    if (err) throw err;
-    console.log("WELCOME TO EMPLOYEE TRACKER!");
-    mainMenu();
-});
+// connection.connect(function (err) {
+//     if (err) throw err;
+console.log("WELCOME TO EMPLOYEE TRACKER!");
+mainMenu();
+// });
 
 //start application prompt
 function mainMenu() {
@@ -80,7 +80,7 @@ function mainMenu() {
                 break;
             case "Exit":
                 console.log("Closing connection... Goodbye!");
-                connection.end();
+                db.endConnection();
                 break;
         }
     });
@@ -88,81 +88,97 @@ function mainMenu() {
 
 //Calls to get employees and roles. calls to prompt for new employee's info
 function addEmployee() {
-    qGetEmployees().then(function (managers) {
-        qGetRoles().then(function (roles) {
+    db.getEmployees(managers => {
+        db.getRoles(roles => {
             promptSelectRole(roles).then(function (roleid) {
                 promptForEmployeeinfo(roleid, managers);
             });
-        });
+        })
     });
 }
 
 //Gets all the employees and asks user to select the employee and their manager
 function updateEmployeeManager() {
-    qGetEmployees().then(function (employees) {
+
+    db.getEmployees(employees => {
         console.log("Select an employee");
         promptSelectEmployee(employees).then(function (employeeid) {
             console.log("Select employee's manager");
             promptSelectEmployee(employees).then(function (managerid) {
-                qUpdateEmployeeManager(employeeid, managerid);
+                db.updateEmployeeManager(employeeid, managerid, employee => {
+                    mainMenu();
+                })
             });
         });
-    });
+    })
 }
 
 //Calls to get employees and roles. Calls to prompt user to select an employee.
 //Calls to prompt user to select a  role to update the selected employee's role
 //Calls to update employee with employee id and new role id
 function updateEmployeeRole() {
-    qGetEmployees().then(function (employees) {
-        qGetRoles().then(function (roles) {
+    db.getEmployees(employees => {
+        db.getRoles(roles => {
             console.log("Select an employee");
             promptSelectEmployee(employees).then(function (employeeid) {
                 promptSelectRole(roles).then(function (roleid) {
-                    qUpdateEmployeeRole(employeeid, roleid);
+                    db.updateEmployeeRole(employeeid, roleid, employee => {
+                        mainMenu();
+                    });
                 });
             });
-        });
-    });
+        })
+    })
 }
 
 //Calls to get all employees and to prompt user to select an employee. 
 //Calls to remove employee based on the user's employee choice
 function removeEmployee() {
-    qGetEmployees().then(function (employees) {
+    db.getEmployees(employees => {
         promptSelectEmployee(employees).then(function (employeeid) {
-            qRemoveEmployee(employeeid);
+            db.removeEmployee(employeeid, employee => {
+                mainMenu();
+            });
         });
-    })
+    });
+    // qGetEmployees().then(function (employees) {
+    //     promptSelectEmployee(employees).then(function (employeeid) {
+    //         qRemoveEmployee(employeeid);
+    //     });
+    // })
 }
 
 //Calls to get roles and to prompt user to select a role. Calls to remove role based on the returned role id
 function removeRole() {
-    qGetRoles().then(function (roles) {
+    db.getRoles(roles => {
         promptSelectRole(roles).then(function (roleid) {
-            qRemoveRole(roleid);
+            db.removeRole(roleid, role => {
+                mainMenu();
+            });
         });
-    });
+    })
 }
 
 //Calls to get department and to prompt user to select a department
 //Calls to remove department based on returned department id
 function removeDepartment() {
-    qGetDepartments().then(function (departments) {
+    db.getDepartments(departments => {
         promptSelectDepartment(departments).then(function (departmentid) {
-            qRemoveDepartment(departmentid);
+            db.removeDepartment(departmentid, department => {
+                mainMenu();
+            });
         });
-    });
+    })
 }
 
 //Calls to get roles and prompt user to select a department
 //Calls to ask the user for the rest of the new role information
 function addRole() {
-    qGetDepartments().then(function (departments) {
+    db.getDepartments(departments => {
         promptSelectDepartment(departments).then(function (departmentid) {
             promptRoleInfo(departmentid);
         });
-    });
+    })
 }
 
 //==================================== QUERIES ===================================
@@ -170,11 +186,11 @@ function addRole() {
 //Calls to get and ask user to select a department. 
 //Queries to select employee info and role info where the role is part of chosen department
 function viewEmployeesDept() {
-    qGetDepartments().then(function (departments) {
+    db.getDepartments(departments => {
         promptSelectDepartment(departments).then(function (departmentid) {
-            connection.query("SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, employee.manager_id, role.title, role.salary FROM employee INNER JOIN role on employee.role_id = role.id AND department_id=?", departmentid, function (err, res) {
-                res = res.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {});
-                console.table(res);
+            db.getEmployeesByDepartment(departmentid, employees => {
+                employees = employees.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {});
+                console.table(employees);
                 mainMenu();
             })
         });
@@ -183,145 +199,17 @@ function viewEmployeesDept() {
 
 //Calls to get and ask user for department. Sums all salieries from all employees working at that department
 function viewDepartmentBudget() {
-    qGetDepartments().then(function (departments) {
+    db.getDepartments(departments => {
         promptSelectDepartment(departments).then(function (departmentid) {
-            connection.query("SELECT SUM(role.salary) FROM employee INNER JOIN role on employee.role_id = role.id AND department_id=?", departmentid, function (err, res) {
-                if (err) throw (err);
+            db.getDepartmentBudget(departmentid, departments => {
                 console.log("Department Budget: ");
-                console.table(res[0]);
+                console.table(departments[0]);
                 mainMenu();
-            });
+            })
 
         });
-    });
+    })
 }
-
-//query get department tickets
-function qGetDepartmentBudget() {
-    console.log("Getting department budget...");
-    return new Promise(function (resolve, reject) {
-        connection.query("", function (err, res) {
-            if (err) reject(err);
-            resolve(res);
-        });
-    });
-}
-
-//queries all employees
-function qGetEmployees() {
-    console.log("Getting all employees...");
-    return new Promise(function (resolve, reject) {
-        connection.query("SELECT * FROM Employee", function (err, res) {
-            if (err) return reject(Error(err));;
-            resolve(res);
-        });
-    });
-}
-
-//queries to add employee
-//@param {array} employee - array of new employees first name, last name and roleid
-function qAddEmployee(employee) {
-    console.log("Adding employee...");
-    connection.query("INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", employee, function (err, res) {
-        if (err) throw err;
-        mainMenu();
-    });
-}
-
-//queries to remove employee 
-//@param employeeid - employee's id to remove
-function qRemoveEmployee(employeeid) {
-    console.log("Removing employee...");
-    connection.query("DELETE FROM employee WHERE id=?", employeeid, function (err, res) {
-        if (err) throw err;
-        mainMenu();
-    });
-}
-
-//queries to remove role 
-//@param roleid - roleid to remove
-function qRemoveRole(roleid) {
-    console.log("Removing role...");
-    connection.query("DELETE FROM role WHERE id=?", roleid, function (err, res) {
-        if (err) throw err;
-        mainMenu();
-    });
-}
-
-//queries to remove department 
-//@param departmentid - departmentid to remove
-function qRemoveDepartment(departmentid) {
-    console.log("Removing department...");
-    connection.query("DELETE FROM department WHERE id=?", departmentid, function (err, res) {
-        if (err) throw err;
-        mainMenu();
-    });
-}
-
-//queries to update employee role
-//@param employeedid - id of employee to update role to
-//@param roleid - id of the employee's new role
-function qUpdateEmployeeRole(employeeid, roleid) {
-    console.log("Updating employee role...");
-    connection.query("UPDATE employee SET role_id = ? WHERE id = ?", [roleid, employeeid], function (err, res) {
-        if (err) throw err;
-        mainMenu();
-    });
-}
-
-//queries to update employee manager
-//@param employeedid - id of employee to update role to
-//@param manager - id of the employee's new manager
-function qUpdateEmployeeManager(employeeid, managerid) {
-    console.log("Updating employee manager...");
-    connection.query("UPDATE employee SET manager_id = ? WHERE id = ?", [managerid, employeeid], function (err, res) {
-        if (err) throw err;
-        mainMenu();
-    });
-}
-
-//queries and returns roles
-function qGetRoles() {
-    console.log("Getting all roles...");
-    return new Promise(function (resolve, reject) {
-        connection.query("SELECT * FROM Role", function (err, res) {
-            if (err) return reject(Error(err));;
-            resolve(res);
-        });
-    });
-}
-
-//queries to add new role
-//@param role - array of the new role's title, salary and department id
-function qAddRole(role) {
-    console.log("Adding new role...");
-    connection.query("INSERT INTO role(title, salary, department_id) VALUES (?, ?, ?)", role, function (err, res) {
-        if (err) throw err;
-        mainMenu();
-    });
-}
-
-//queries and returns all departments
-function qGetDepartments() {
-    console.log("Getting all departments...");
-    return new Promise(function (resolve, reject) {
-        connection.query("SELECT * FROM Department", function (err, res) {
-            if (err) return reject(Error(err));;
-            resolve(res);
-        });
-    });
-}
-
-//Queries to add a new department
-//@param department - new department's name
-function qAddDepartment(department) {
-    console.log("Adding department...");
-    connection.query("INSERT INTO department(name) VALUES (?)", department, function (err, res) {
-        if (err) throw err;
-        mainMenu();
-    });
-}
-
 
 //======================================== PROMPTS =================================================
 
@@ -358,12 +246,15 @@ function promptForEmployeeinfo(roleid, managers) {
                 managerid = m.id;
             }
         });
-        qAddEmployee([
+
+        db.addEmployee([
             res.firstName,
             res.lastName,
             roleid,
             managerid
-        ]);
+        ], employee => {
+            mainMenu()
+        })
     });
 
 }
@@ -377,9 +268,11 @@ function promptDepartmentInfo() {
             name: "name"
         }
     ).then(function (res) {
-        qAddDepartment([
+        db.addDepartment([
             res.name
-        ]);
+        ], department => {
+            mainMenu();
+        })
     });
 }
 
@@ -400,11 +293,13 @@ function promptRoleInfo(departmentid) {
             name: "salary"
         }
     ]).then(function (res) {
-        qAddRole([
+        db.addRole([
             res.title,
             res.salary,
             departmentid
-        ]);
+        ], role => {
+            mainMenu();
+        });
     });
 }
 
@@ -484,8 +379,9 @@ function promptSelectDepartment(departments) {
 
 //displays employees
 function displayEmployees() {
-    qGetEmployees().then(function (res) {
+    db.getEmployees((res) => {
         console.log("======================== Employees =========================");
+        console.log("res", res)
         res = res.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {});
         console.table(res);
         mainMenu();
@@ -494,20 +390,20 @@ function displayEmployees() {
 
 //displays roles
 function displayRoles() {
-    qGetRoles().then(function (res) {
+    db.getRoles(res => {
         console.log("=========================== Roles ===========================");
         res = res.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {});
         console.table(res);
         mainMenu();
-    });
+    })
 }
 
 //displays department
 function displayDepartments(dept) {
-    qGetDepartments().then(function (res) {
+    db.getDepartments(departments => {
         console.log("======= Departments ========");
-        res = res.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {});
-        console.table(res);
+        departments = departments.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {});
+        console.table(departments);
         mainMenu();
     });
 }
