@@ -1,7 +1,5 @@
 var inquirer = require("inquirer");
-const connection = require("./config/connection")
 var db = require("./db/index.js");
-
 
 var menu = [{
     type: "list",
@@ -31,12 +29,8 @@ var menu = [{
     when: ({ menuChoice }) => menuChoice === "Add Department"
 }]
 
-//Connect to the database
-// connection.connect(function (err) {
-//     if (err) throw err;
 console.log("WELCOME TO EMPLOYEE TRACKER!");
 mainMenu();
-// });
 
 //start application prompt
 function mainMenu() {
