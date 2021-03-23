@@ -3,7 +3,7 @@ const connection = require("./config/connection")
 var db = require("./db/index.js");
 
 
-var menu = {
+var menu = [{
     type: "list",
     name: "menuChoice",
     message: "What would you like to do?",
@@ -24,7 +24,12 @@ var menu = {
         "View Department Budget",
         "Exit"
     ]
-}
+}, {
+    type: "input",
+    message: "Enter department name: ",
+    name: "deptName",
+    when: ({ menuChoice }) => menuChoice === "Add Department"
+}]
 
 //Connect to the database
 // connection.connect(function (err) {
@@ -70,7 +75,7 @@ function mainMenu() {
                 displayDepartments();
                 break;
             case "Add Department":
-                promptDepartmentInfo();
+                addDepartment(res.deptName);
                 break;
             case "Remove Department":
                 removeDepartment();
@@ -141,11 +146,6 @@ function removeEmployee() {
             });
         });
     });
-    // qGetEmployees().then(function (employees) {
-    //     promptSelectEmployee(employees).then(function (employeeid) {
-    //         qRemoveEmployee(employeeid);
-    //     });
-    // })
 }
 
 //Calls to get roles and to prompt user to select a role. Calls to remove role based on the returned role id
@@ -260,20 +260,12 @@ function promptForEmployeeinfo(roleid, managers) {
 }
 
 //Ask user for information of the new department to add and calls to query add department
-function promptDepartmentInfo() {
-    inquirer.prompt(
-        {
-            type: "input",
-            message: "Enter department name: ",
-            name: "name"
-        }
-    ).then(function (res) {
-        db.addDepartment([
-            res.name
-        ], department => {
-            mainMenu();
-        })
-    });
+function addDepartment(deptName) {
+    db.addDepartment([
+        deptName
+    ], department => {
+        mainMenu();
+    })
 }
 
 //Ask user for information of the new role to add

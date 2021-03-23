@@ -77,6 +77,7 @@ class DB {
         });
     }
 
+    //=================== Department ========================
     getDepartments(cb) {
         console.log("Getting all departments...");
         connection.query("SELECT * FROM Department", (err, res) => {
