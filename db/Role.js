@@ -14,7 +14,7 @@ class Role {
 
     addRole(role, cb) {
         console.log("Adding new role...");
-        connection.query("INSERT INTO role(title, salary, department_id) VALUES (?, ?, ?)", role, (err, res) => {
+        this.connection.query("INSERT INTO role(title, salary, department_id) VALUES (?, ?, ?)", role, (err, res) => {
             if (err) throw err;
             cb(res);
         });
@@ -22,7 +22,7 @@ class Role {
 
     removeRole(id, cb) {
         console.log("Removing role...");
-        connection.query("DELETE FROM role WHERE id=?", id, (err, res) => {
+        this.connection.query("DELETE FROM role WHERE id=?", id, (err, res) => {
             if (err) throw err;
             cb(res);
         });
