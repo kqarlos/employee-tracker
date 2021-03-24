@@ -87,8 +87,8 @@ function mainMenu() {
 
 //Calls to get employees and roles. calls to prompt for new employee's info
 function addEmployee() {
-    db.getEmployees(managers => {
-        db.getRoles(roles => {
+    db.Employee.getEmployees(managers => {
+        db.Role.getRoles(roles => {
             promptSelectRole(roles).then(function (roleid) {
                 promptForEmployeeinfo(roleid, managers);
             });
@@ -99,12 +99,12 @@ function addEmployee() {
 //Gets all the employees and asks user to select the employee and their manager
 function updateEmployeeManager() {
 
-    db.getEmployees(employees => {
+    db.Employee.getEmployees(employees => {
         console.log("Select an employee");
         promptSelectEmployee(employees).then(function (employeeid) {
             console.log("Select employee's manager");
             promptSelectEmployee(employees).then(function (managerid) {
-                db.updateEmployeeManager(employeeid, managerid, employee => {
+                db.Employee.updateEmployeeManager(employeeid, managerid, employee => {
                     mainMenu();
                 })
             });
@@ -116,12 +116,12 @@ function updateEmployeeManager() {
 //Calls to prompt user to select a  role to update the selected employee's role
 //Calls to update employee with employee id and new role id
 function updateEmployeeRole() {
-    db.getEmployees(employees => {
-        db.getRoles(roles => {
+    db.Employee.getEmployees(employees => {
+        db.Role.getRoles(roles => {
             console.log("Select an employee");
             promptSelectEmployee(employees).then(function (employeeid) {
                 promptSelectRole(roles).then(function (roleid) {
-                    db.updateEmployeeRole(employeeid, roleid, employee => {
+                    db.Employee.updateEmployeeRole(employeeid, roleid, employee => {
                         mainMenu();
                     });
                 });
@@ -133,9 +133,9 @@ function updateEmployeeRole() {
 //Calls to get all employees and to prompt user to select an employee. 
 //Calls to remove employee based on the user's employee choice
 function removeEmployee() {
-    db.getEmployees(employees => {
+    db.Employee.getEmployees(employees => {
         promptSelectEmployee(employees).then(function (employeeid) {
-            db.removeEmployee(employeeid, employee => {
+            db.Employee.removeEmployee(employeeid, employee => {
                 mainMenu();
             });
         });
@@ -144,9 +144,9 @@ function removeEmployee() {
 
 //Calls to get roles and to prompt user to select a role. Calls to remove role based on the returned role id
 function removeRole() {
-    db.getRoles(roles => {
+    db.Role.getRoles(roles => {
         promptSelectRole(roles).then(function (roleid) {
-            db.removeRole(roleid, role => {
+            db.Role.removeRole(roleid, role => {
                 mainMenu();
             });
         });
@@ -156,9 +156,9 @@ function removeRole() {
 //Calls to get department and to prompt user to select a department
 //Calls to remove department based on returned department id
 function removeDepartment() {
-    db.getDepartments(departments => {
+    db.Department.getDepartments(departments => {
         promptSelectDepartment(departments).then(function (departmentid) {
-            db.removeDepartment(departmentid, department => {
+            db.Department.removeDepartment(departmentid, department => {
                 mainMenu();
             });
         });
@@ -168,7 +168,7 @@ function removeDepartment() {
 //Calls to get roles and prompt user to select a department
 //Calls to ask the user for the rest of the new role information
 function addRole() {
-    db.getDepartments(departments => {
+    db.Department.getDepartments(departments => {
         promptSelectDepartment(departments).then(function (departmentid) {
             promptRoleInfo(departmentid);
         });
@@ -180,9 +180,9 @@ function addRole() {
 //Calls to get and ask user to select a department. 
 //Queries to select employee info and role info where the role is part of chosen department
 function viewEmployeesDept() {
-    db.getDepartments(departments => {
+    db.Department.getDepartments(departments => {
         promptSelectDepartment(departments).then(function (departmentid) {
-            db.getEmployeesByDepartment(departmentid, employees => {
+            db.Employee.getEmployeesByDepartment(departmentid, employees => {
                 employees = employees.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {});
                 console.table(employees);
                 mainMenu();
@@ -193,9 +193,9 @@ function viewEmployeesDept() {
 
 //Calls to get and ask user for department. Sums all salieries from all employees working at that department
 function viewDepartmentBudget() {
-    db.getDepartments(departments => {
+    db.Department.getDepartments(departments => {
         promptSelectDepartment(departments).then(function (departmentid) {
-            db.getDepartmentBudget(departmentid, departments => {
+            db.Department.getDepartmentBudget(departmentid, departments => {
                 console.log("Department Budget: ");
                 console.table(departments[0]);
                 mainMenu();
@@ -241,7 +241,7 @@ function promptForEmployeeinfo(roleid, managers) {
             }
         });
 
-        db.addEmployee([
+        db.Employee.addEmployee([
             res.firstName,
             res.lastName,
             roleid,
@@ -255,7 +255,7 @@ function promptForEmployeeinfo(roleid, managers) {
 
 //Ask user for information of the new department to add and calls to query add department
 function addDepartment(deptName) {
-    db.addDepartment([
+    db.Department.addDepartment([
         deptName
     ], department => {
         mainMenu();
@@ -279,7 +279,7 @@ function promptRoleInfo(departmentid) {
             name: "salary"
         }
     ]).then(function (res) {
-        db.addRole([
+        db.Role.addRole([
             res.title,
             res.salary,
             departmentid
@@ -365,9 +365,8 @@ function promptSelectDepartment(departments) {
 
 //displays employees
 function displayEmployees() {
-    db.getEmployees((res) => {
+    db.Employee.getEmployees((res) => {
         console.log("======================== Employees =========================");
-        console.log("res", res)
         res = res.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {});
         console.table(res);
         mainMenu();
@@ -376,7 +375,7 @@ function displayEmployees() {
 
 //displays roles
 function displayRoles() {
-    db.getRoles(res => {
+    db.Role.getRoles(res => {
         console.log("=========================== Roles ===========================");
         res = res.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {});
         console.table(res);
@@ -386,7 +385,7 @@ function displayRoles() {
 
 //displays department
 function displayDepartments(dept) {
-    db.getDepartments(departments => {
+    db.Department.getDepartments(departments => {
         console.log("======= Departments ========");
         departments = departments.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {});
         console.table(departments);
