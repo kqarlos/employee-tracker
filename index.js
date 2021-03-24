@@ -367,6 +367,7 @@ function promptSelectDepartment(departments) {
 function displayEmployees() {
     db.Employee.getEmployees((res) => {
         console.log("======================== Employees =========================");
+        // Uses the value of ID as index
         res = res.reduce((acc, { id, ...x }) => { acc[id] = x; return acc }, {});
         console.table(res);
         mainMenu();

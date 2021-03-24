@@ -6,7 +6,12 @@ class Employee {
 
     getEmployees(cb) {
         console.log("Getting all employees");
-        this.connection.query("SELECT * FROM Employee", (err, res) => {
+        this.connection.query(`
+                SELECT employee.id, employee.first_name, employee.last_name, role.title AS role_title, manager.first_name AS manager
+                FROM Employee
+                LEFT JOIN role ON employee.role_id = role.id
+                LEFT JOIN employee manager ON employee.manager_id = manager.id
+        `, (err, res) => {
             if (err) throw err;
             cb(res);
         });

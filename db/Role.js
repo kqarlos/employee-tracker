@@ -6,10 +6,13 @@ class Role {
 
     getRoles(cb) {
         console.log("Getting all roles")
-        this.connection.query("SELECT * FROM Role", (err, res) => {
-            if (err) throw err;
-            cb(res);
-        })
+        this.connection.query(`
+                    SELECT title, salary, name AS department_name
+                    FROM role LEFT JOIN department ON role.department_id = department.id`
+            , (err, res) => {
+                if (err) throw err;
+                cb(res);
+            })
     }
 
     addRole(role, cb) {
