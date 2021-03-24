@@ -31,17 +31,20 @@ Keep track of your company's employees, roles, and departments. This console app
 ## Installation
 
 Steps to run application:
-1. Clone git repository
-2. Install dependencies
-3. Create schema with given schema.sql, seed.sql
-4. run app
 
-```
-git clone git@github.com:kqarlos/employee-tracker.git
-npm install
-node employeeTracker.js
+    Command prompt:
+    1. mysql -u root -p
+    2. Enter password
+    3. source db/schema.sql
+    4. source d/seed.sql (optional)
 
-```
+    Git Bash
+    1. git clone git@github.com:kqarlos/employee-tracker.git
+    2. npm install
+    3. add enviroment variable or update credentials in connection.js
+    4. npm start
+
+
 ## Usage
 
 ### Screenshots
@@ -71,8 +74,8 @@ node employeeTracker.js
 
 //Calls to get employees and roles. calls to prompt for new employee's info
 function addEmployee() {
-    qGetEmployees().then(function (managers) {
-        qGetRoles().then(function (roles) {
+    db.Employee.getEmployees().then(function (managers) {
+        db.Role.getRoles().then(function (roles) {
             promptSelectRole(roles).then(function (roleid) {
                 promptForEmployeeinfo(roleid, managers);
             });
@@ -87,18 +90,16 @@ function addEmployee() {
 
 ```javascript
 
-function qGetEmployees() {
-    console.log("Getting all employees...");
-    return new Promise(function (resolve, reject) {
-        connection.query("SELECT * FROM Employee", function (err, res) {
-            if (err) return reject(Error(err));;
-            resolve(res);
+    getEmployees(cb) {
+        console.log("Getting all employees");
+        this.connection.query("SELECT * FROM Employee", (err, res) => {
+            if (err) throw err;
+            cb(res);
         });
-    });
-}
+    }
 
 ```
-* This siply returns a promise. This promise resolves with an array of employees as soon as the query is done. 
+* This function from the Employee class perform the query to retrieve all employees and call the callback function on the query response.
 
 3. Asks user to select a role for the new employee
 
@@ -166,35 +167,35 @@ function promptForEmployeeinfo(roleid, managers) {
                 managerid = m.id;
             }
         });
-        qAddEmployee([
+        db.Employee.addEmployee([
             res.firstName,
             res.lastName,
             roleid,
             managerid
-        ]);
+        ], employee =>{
+            mainMenu()
+        );
     });
 
 }
 
 ```
-* This function prompts the user to enter or select information of the new employee. It uses the array of managers and maps only their  name. This allows the user to select the new employee's manager based on easier to understand properties. Then, the user's selection is mapped back to the original arrays to get the _managerid_. The user's input information, roleid and managerid is then sent to _qAddEmployee()_ to be queried.
+* This function prompts the user to enter or select information of the new employee. It uses the array of managers and maps only their  name. This allows the user to select the new employee's manager based on easier to understand properties. Then, the user's selection is mapped back to the original arrays to get the _managerid_. The user's input information, roleid and managerid is then used to call the database to _addEmployee()_ to the employee table.
 
 4. Adds an employee to the database
 
 ```javascript
 
-//queries to add employee
-//@param {array} employee - array of new employees first name, last name and roleid
-function qAddEmployee(employee) {
-    console.log("Adding employee...");
-    connection.query("INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", employee, function (err, res) {
-        if (err) throw err;
-        mainMenu();
-    });
-}
+    addEmployee(employee, cb) {
+        console.log("Adding employee...");
+        this.connection.query("INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", employee, (err, res) => {
+            if (err) throw err;
+            cb(res);
+        });
+    }
 
 ```
-* This function reciees an array of employee information. This arraay is used to insert a new employee into the +employees_ table. After the query is performed, a call to get back to the main menu is performed.
+* This function recieves an array of employee information and a callback function. This array is used to insert a new employee into the _employees_ table. After the query is performed, the callback is called on the response.
 
 ## Credits
 
