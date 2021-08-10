@@ -4,8 +4,8 @@
   "description": "Application that track your employee information",
   "main": "employeeTracker.js",
   "dependencies": {
-    "dotenv": "^8.2.0",
-    "inquirer": "^8.0.0",
+    "dotenv": "^8.6.0",
+    "inquirer": "^8.1.2",
     "mysql": "^2.18.1"
   },
   "devDependencies": {},
